@@ -13,7 +13,6 @@ Rebol [
 ]
 
 import air-tools
-secure [%\c\Dev\Builder\ allow]
 
 make-dir %build/
 
@@ -29,7 +28,7 @@ air-task
 
 air-task
 "Compile Android natives" [
-	cd %platform/android
+	cd   %platform/android
 	eval %gradlew [clean build]
 	print as-green "Lint results:"
 	print read/string %app/build/reports/lint-results-debug.txt
@@ -44,15 +43,13 @@ air-task
 		id:  @tech.oldes.GooglePlay
 		initializer: @GooglePlayExtension
 		platforms: [Android-ARM Android-ARM64 Android-x86 Android-x64]
-		;resources: %services_games-23.1.0_auth-21.0.0/*
-		;resources: %services-games-21.0.0_auth-20.0.0_asset-2.1.0/* ;KO
-		;resources: %services-games-20.0.1_auth-19.0.0_asset-2.2.0/* ;OK
-		;resources: %services-games-20.0.0_auth-19.0.0_asset-2.1.0 ;OK
 		resources: %services-games-20.0.1_auth-20.0.0_asset-2.2.0
-		;resources: %services-games-20.0.1_auth-20.0.0
 	]
 ]
-air-task
-"Copy ANE to test app folder" [
-	copy-file %build/tech.oldes.GooglePlay.ane %\c\Dev\Builder\tree\air\HelloAir\Extensions\tech.oldes.GooglePlay.ane
+
+if exists? %../HelloAir/Extensions/ [
+	air-task
+	"Copy ANE to the HelloAir test app folder" [
+		copy-file %build/tech.oldes.GooglePlay.ane %../HelloAir/Extensions/
+	]
 ]
