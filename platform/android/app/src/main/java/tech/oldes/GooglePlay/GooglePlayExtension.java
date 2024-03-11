@@ -17,7 +17,7 @@ import com.google.android.gms.common.api.ApiException;
 public class GooglePlayExtension implements FREExtension
 {
 	public static final String TAG = "ANE_GooglePlay";
-	public static final String VERSION = "1.0.0 (Games: 20.0.1 Auth: 20.0.0 Asset: 2.2.0)";
+	public static final String VERSION = "1.2.0 (Games: 23.1.0 Auth: 21.0.0 Asset: 2.2.1)";
 	public static final int VERBOSE = 1;
 
 	public static GooglePlayExtensionContext extensionContext;

@@ -12,7 +12,7 @@ Rebol [
 	needs: 3.16.0 ;; https://github.com/Oldes/Rebol3/releases/tag/3.16.0
 ]
 
-import air-tools
+import airsdk
 
 make-dir %build/
 
@@ -36,6 +36,18 @@ air-task
 	copy-file %platform/android/app/build/outputs/aar/app-release.aar %build/tech.oldes.GooglePlay.aar
 ]
 
+if not exists? %resources/ [
+	air-task
+	"Download resources" [
+		ane-dependencies %resources/ [
+			"androidx.activity:activity:1.8.2"
+			"com.google.android.play:asset-delivery:2.2.1"
+			"com.google.android.gms:play-services-games:23.1.0"
+			"com.google.android.gms:play-services-auth:21.0.0"
+		]
+	]
+]
+
 air-task
 "Compile GooglePlayExtension ANE" [
 	delete-file %build/tech.oldes.GooglePlay.ane
@@ -43,7 +55,7 @@ air-task
 		id:  @tech.oldes.GooglePlay
 		initializer: @GooglePlayExtension
 		platforms: [Android-ARM Android-ARM64 Android-x86 Android-x64]
-		resources: %services-games-20.0.1_auth-20.0.0_asset-2.2.0
+		resources: %resources/
 	]
 ]
 
