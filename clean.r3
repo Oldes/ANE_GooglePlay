@@ -1,6 +1,6 @@
 Rebol [title: "Clean repository"]
 
-import air-tools
+import airsdk
 
 air-task "Clean repository" [
 	try [delete-dir %temp/]

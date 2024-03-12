@@ -12,7 +12,7 @@ Rebol [
 	needs: 3.16.0 ;; https://github.com/Oldes/Rebol3/releases/tag/3.16.0
 ]
 
-import airsdk
+import airsdk ;== https://github.com/Oldes/Rebol-AIRSDK
 
 make-dir %build/
 
