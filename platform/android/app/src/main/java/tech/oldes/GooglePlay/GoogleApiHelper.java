@@ -8,6 +8,7 @@
 
 package tech.oldes.GooglePlay;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -19,7 +20,7 @@ import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.common.api.ApiException;
-import com.google.android.gms.common.api.Scope;
+import com.google.android.gms.common.api.CommonStatusCodes;
 import com.google.android.gms.drive.Drive;
 import com.google.android.gms.games.GamesActivityResultCodes;
 import com.google.android.gms.games.SnapshotsClient;
@@ -42,7 +43,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import androidx.annotation.NonNull;
-
+@SuppressWarnings("deprecation")
 public class GoogleApiHelper {
     static final String TAG = "ANE_Google_Helper";
     // Client used to sign in with Google APIs
@@ -66,147 +67,149 @@ public class GoogleApiHelper {
     private static final int USER_SIGNING = 1;
     private static final int USER_SIGNED = 2;
 
+    private GoogleSignInOptions mSignInOptions = null;
 
+
+    @SuppressLint("VisibleForTests")
     public GoogleApiHelper(Activity activity) {
         mActivity = activity;
-    }
-
-    private GoogleSignInClient getSignInClient() {
-        if (mGoogleSignInClient == null) {
-            Activity activity = GooglePlayExtension.extensionContext.getActivity(); //.getMainActivity();
-            Log.i(TAG, "Resolving mGoogleSignInClient, activity: "+ activity);
-            // Create the client used to sign in to Google services.
-            GoogleSignInOptions signInOption =
-                new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_GAMES_SIGN_IN)
-                    // Add the APPFOLDER scope for Snapshot support.
-                    .requestScopes(Drive.SCOPE_APPFOLDER) //not needed anymore?
-                    .build();
-
-            Log.d(TAG, "GoogleSignInOptions scopes: "+ Arrays.toString(signInOption.getScopeArray()));
-            mGoogleSignInClient = GoogleSignIn.getClient(activity, signInOption);
-            Log.d(TAG, "GoogleSignInClient: "+ mGoogleSignInClient);
-        }
-        return mGoogleSignInClient;
+        mSignInOptions =
+            new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_GAMES_SIGN_IN)
+                // Add the APPFOLDER scope for Snapshot support.
+                .requestScopes(Drive.SCOPE_APPFOLDER) //not needed anymore?
+                .build();
+        Log.d(TAG, "GoogleSignInOptions scopes: "+ Arrays.toString(mSignInOptions.getScopeArray()));
+        Log.i(TAG, "Resolving mGoogleSignInClient, activity: "+ activity);
+        // Create the client used to sign in to Google services.
+        mGoogleSignInClient = GoogleSignIn.getClient(activity, mSignInOptions);
+        Log.d(TAG, "GoogleSignInClient: "+ mGoogleSignInClient);
     }
 
     public boolean isSignInAvailable() {
-        return getSignInClient() != null;
+        return mGoogleSignInClient != null;
     }
 
     public boolean isSignedIn() {
-        return mSignedInAccount != null && GoogleSignIn.getLastSignedInAccount(GooglePlayExtension.appContext) != null;
-    }
-
-    public boolean signIn() {
-        Log.i(TAG, "signIn()");
-        if (isSignedIn()) {
-            GooglePlayExtension.extensionContext.dispatchEvent("ON_SIGN_IN_SUCCESS");
-            return true;
-        }
-        if (isSignInAvailable()) {
-            try {
-                Activity a = GooglePlayExtension.extensionContext.getActivity();
-                a.startActivityForResult(mGoogleSignInClient.getSignInIntent(), RC_SIGN_IN);
-            }
-            catch (Exception e) {
-                Log.e(TAG, "FAILED signIn: "+e.toString());
-                return false;
-            }
-        }
-        Log.i(TAG, "signIn() end");
-        return true;
-    }
-
-    public boolean silentSignIn() {
-        if (isSignInAvailable()) {
-            mGoogleSignInClient.silentSignIn().addOnCompleteListener(
-                    new OnCompleteListener<GoogleSignInAccount>() {
-                        @Override
-                        public void onComplete(@NonNull Task<GoogleSignInAccount> task) {
-                            if (task.isSuccessful()) {
-                                if(GooglePlayExtension.VERBOSE>2) Log.d(TAG, "signInSilently(): success");
-                                GooglePlayExtension.googleApiHelper.onConnected(task.getResult());
-                            } else {
-                                if(GooglePlayExtension.VERBOSE>0) Log.d(TAG, "signInSilently(): failure", task.getException());
-                                GooglePlayExtension.extensionContext.dispatchEvent("ON_SIGN_IN_FAIL",  task.getException().getMessage());
-                                GooglePlayExtension.googleApiHelper.onDisconnected();
-                            }
-                        }
-                    });
+        GoogleSignInAccount account = GoogleSignIn.getLastSignedInAccount(GooglePlayExtension.appContext);
+        Log.d(TAG, "isSignedIn account: "+ account);
+        if (mSignInOptions != null && GoogleSignIn.hasPermissions(account, mSignInOptions.getScopeArray())) {
+            mSignedInAccount = account;
             return true;
         }
         return false;
+    }
+
+    public void signIn() {
+        Log.i(TAG, "signIn()");
+        if (isSignedIn()) {
+            // User is already connected, but as signIn was requested, report it...
+            onConnected();
+            return;
+        }
+        // If user is not signed, try to sign him in silently first...
+        silentSignIn();
+        Log.i(TAG, "signIn() end");
+    }
+
+    public void silentSignIn() {
+        if (isSignInAvailable()) {
+            mGoogleSignInClient.silentSignIn().addOnCompleteListener(
+                new OnCompleteListener<GoogleSignInAccount>() {
+                    @Override
+                    public void onComplete(@NonNull Task<GoogleSignInAccount> task) {
+                        if (task.isSuccessful()) {
+                            mSignedInAccount = task.getResult();
+                            Log.d(TAG, "silentSignIn(): success -> "+ mSignedInAccount);
+                            GooglePlayExtension.googleApiHelper.onConnected();
+                        } else {
+                            Exception e = task.getException();
+                            // Exception with SIGN_IN_REQUIRED status code means, that verbose sign-in is required!
+                            if (e instanceof ApiException && ((ApiException) e).getStatusCode() == CommonStatusCodes.SIGN_IN_REQUIRED) {
+                                // Start a verbose SignIn activity....
+                                try {
+                                    Activity a = GooglePlayExtension.extensionContext.getActivity();
+                                    a.startActivityForResult(mGoogleSignInClient.getSignInIntent(), RC_SIGN_IN);
+                                }
+                                catch (Exception exception) {
+                                    Log.e(TAG, "FAILED signIn: "+exception.toString());
+                                    if(GooglePlayExtension.VERBOSE>2) exception.printStackTrace();
+                                }
+                            } else {
+                                Log.e(TAG, "silentSignIn(): failure", e);
+                                GooglePlayExtension.extensionContext.dispatchEvent("ON_SIGN_IN_FAIL", e.getMessage());
+                                GooglePlayExtension.googleApiHelper.onDisconnected();
+                            }
+                        }
+                    }
+                });
+        }
     }
 
     public void signOut() {
         if(GooglePlayExtension.VERBOSE>2) Log.d(TAG, "signOut()");
         if (mGoogleSignInClient != null) {
             mGoogleSignInClient.signOut().addOnCompleteListener(
-                    new OnCompleteListener<Void>() {
-                        @Override
-                        public void onComplete(@NonNull Task<Void> task) {
-                            boolean successful = task.isSuccessful();
-                            if(GooglePlayExtension.VERBOSE>0) Log.d(TAG, "signOut(): " + (successful ? "success" : "failed"));
-                            onDisconnected();
-                        }
-                    });
+                new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        boolean successful = task.isSuccessful();
+                        if(GooglePlayExtension.VERBOSE>0) Log.d(TAG, "signOut(): " + (successful ? "success" : "failed"));
+                        onDisconnected();
+                    }
+                });
         }
     }
-	public void reportAchievement(String id, double percent) {
-		if(GooglePlayExtension.VERBOSE>0) Log.d(TAG, "reportAchievement: "+ id +" "+ percent+" client:"+mAchievementsClient);
-		try {
-			if (percent == 0) {// it means we have unlocked it.
-				mAchievementsClient.unlock(id);
-			} else {
-				if (percent > 0 && percent <= 1) {
-					mAchievementsClient.setSteps(id, (int) (percent * 100));
-				}
-			}
-		} catch (Exception e) {
-			Log.e(TAG, e.toString());
-		}
-	}
-
-	public void showAchievements() {
-		if (mAchievementsClient != null) {
-			try {
-				mAchievementsClient
-						.getAchievementsIntent()
-						.addOnSuccessListener(new OnSuccessListener<Intent>() {
-							@Override
-							public void onSuccess(Intent intent) {
-								try {
-									GooglePlayExtension.extensionContext.getActivity().startActivityForResult(intent, RC_ACHIEVEMENT_UI);
-								}
-								catch(Exception e){
-									Log.e(TAG, "Failed to start achievements activity.");
-								}
-							}
-						});
-			} catch (Exception e) {
-				Log.e(TAG, "showAchievements() failed: "+ e);
-			}
-
-		}
-	}
-
-	@SuppressWarnings("VisibleForTests")
-	public void onConnected(GoogleSignInAccount googleSignInAccount) {
-
-        if(GooglePlayExtension.VERBOSE>0) Log.d(TAG, "onConnected: "+ googleSignInAccount);
-        if (mSignedInAccount != googleSignInAccount) {
-            try {
-                Context ctx = GooglePlayExtension.appContext;
-                mSignedInAccount = googleSignInAccount;
-                mAchievementsClient = Games.getAchievementsClient(ctx, GoogleSignIn.getLastSignedInAccount(ctx));
-                mSnapshotsClient = Games.getSnapshotsClient(ctx, googleSignInAccount);
-                Games.getGamesClient(mActivity, GoogleSignIn.getLastSignedInAccount(mActivity)).setViewForPopups(mActivity.findViewById(android.R.id.content));
-            } catch (Exception e) {
-                Log.e(TAG, "onConnected() error: "+ e);
-                return;
+    public void reportAchievement(String id, double percent) {
+        if(GooglePlayExtension.VERBOSE>0) Log.d(TAG, "reportAchievement: "+ id +" "+ percent+" client:"+mAchievementsClient);
+        try {
+            if (percent == 0) {// it means we have unlocked it.
+                mAchievementsClient.unlock(id);
+            } else if (percent > 0 && percent <= 1) {
+                mAchievementsClient.setSteps(id, (int) (percent * 100));
             }
+        } catch (Exception e) {
+            Log.e(TAG, e.toString());
         }
-        GooglePlayExtension.extensionContext.dispatchEvent("ON_SIGN_IN_SUCCESS");
+    }
+
+    public void showAchievements() {
+        if (mAchievementsClient != null) {
+            try {
+                mAchievementsClient
+                .getAchievementsIntent()
+                .addOnSuccessListener(new OnSuccessListener<Intent>() {
+                    @Override
+                    public void onSuccess(Intent intent) {
+                        try {
+                            GooglePlayExtension.extensionContext.getActivity().startActivityForResult(intent, RC_ACHIEVEMENT_UI);
+                        }
+                        catch(Exception e){
+                            Log.e(TAG, "Failed to start achievements activity.");
+                            if(GooglePlayExtension.VERBOSE>2) e.printStackTrace();
+                        }
+                    }
+                });
+            } catch (Exception e) {
+                Log.e(TAG, "showAchievements() failed: "+ e);
+                if(GooglePlayExtension.VERBOSE>2) e.printStackTrace();
+            }
+
+        }
+    }
+
+    @SuppressLint("VisibleForTests")
+    public void onConnected() {
+        if(GooglePlayExtension.VERBOSE>0) Log.d(TAG, "onConnected: "+ mSignedInAccount);
+        assert mSignedInAccount != null;
+        try {
+            Context context = GooglePlayExtension.appContext;
+            mAchievementsClient = Games.getAchievementsClient(context, mSignedInAccount);
+            mSnapshotsClient = Games.getSnapshotsClient(context, mSignedInAccount);
+            Games.getGamesClient(mActivity, mSignedInAccount).setViewForPopups(mActivity.findViewById(android.R.id.content));
+            GooglePlayExtension.extensionContext.dispatchEvent("ON_SIGN_IN_SUCCESS");
+        } catch (Exception e) {
+            Log.e(TAG, e.toString());
+        }
     }
 
     public void onDisconnected() {
@@ -228,8 +231,8 @@ public class GoogleApiHelper {
                 Task<GoogleSignInAccount> task =
                     GoogleSignIn.getSignedInAccountFromIntent(intent);
 
-                GoogleSignInAccount account = task.getResult(ApiException.class);
-                onConnected(account);
+                mSignedInAccount = task.getResult(ApiException.class);
+                onConnected();
             } catch (Exception apiException) {
                 String message = apiException.getMessage();
                 if (message == null || message.isEmpty()) {
@@ -237,7 +240,7 @@ public class GoogleApiHelper {
                 }
                 Log.e(TAG, "Failed to signIn: " + message);
                 Log.e(TAG, apiException.toString());
-                GooglePlayExtension.extensionContext.dispatchEvent("ON_SIGN_IN_FAIL", ""+resultCode + "|"+message);
+                GooglePlayExtension.extensionContext.dispatchEvent("ON_SIGN_IN_FAIL", resultCode + "|"+message);
                 onDisconnected();
             }
         } else if(requestCode == RC_ACHIEVEMENT_UI) {

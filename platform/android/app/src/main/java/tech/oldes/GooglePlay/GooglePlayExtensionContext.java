@@ -96,7 +96,7 @@ public class GooglePlayExtensionContext extends FREContext implements
 	public void onActivityStateChanged( AndroidActivityWrapper.ActivityState state ) {
 		switch ( state ) {
 			case RESUMED:
-				//GoogleExtension.googleApiHelper.silentSignIn();
+				GooglePlayExtension.googleApiHelper.isSignedIn();
 				break;
 			case STARTED:
 			case RESTARTED:
