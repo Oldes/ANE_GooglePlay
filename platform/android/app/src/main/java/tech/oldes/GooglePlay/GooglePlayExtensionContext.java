@@ -29,12 +29,9 @@ public class GooglePlayExtensionContext extends FREContext implements
 	StateChangeCallback
 {
 	private AndroidActivityWrapper aaw = null;
-	private static GooglePlayExtensionContext instance = null;
 
 	public GooglePlayExtensionContext()
 	{
-		instance = this;
-
 		aaw = AndroidActivityWrapper.GetAndroidActivityWrapper();
 		aaw.addActivityResultListener(this);
 		aaw.addActivityStateChangeListner(this);

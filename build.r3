@@ -40,10 +40,10 @@ if not exists? %resources/ [
 	air-task
 	"Download resources" [
 		ane-dependencies %resources/ [
-			"androidx.activity:activity:1.8.2"
-			"com.google.android.play:asset-delivery:2.2.1"
-			"com.google.android.gms:play-services-games:23.1.0"
-			"com.google.android.gms:play-services-auth:21.0.0"
+			"androidx.activity:activity:1.9.2"
+			"com.google.android.play:asset-delivery:2.2.2"
+			"com.google.android.gms:play-services-games:23.2.0"
+			"com.google.android.gms:play-services-auth:21.2.0"
 		]
 	]
 ]

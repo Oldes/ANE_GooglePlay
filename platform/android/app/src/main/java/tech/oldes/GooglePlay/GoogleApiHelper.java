@@ -190,7 +190,8 @@ public class GoogleApiHelper {
 		}
 	}
 
-    public void onConnected(GoogleSignInAccount googleSignInAccount) {
+	@SuppressWarnings("VisibleForTests")
+	public void onConnected(GoogleSignInAccount googleSignInAccount) {
 
         if(GooglePlayExtension.VERBOSE>0) Log.d(TAG, "onConnected: "+ googleSignInAccount);
         if (mSignedInAccount != googleSignInAccount) {

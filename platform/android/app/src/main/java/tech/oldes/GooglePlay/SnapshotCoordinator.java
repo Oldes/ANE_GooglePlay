@@ -47,6 +47,8 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 /**
  * The SnapshotCoordinator is used to overcome some dangerous behavior when using Saved Game API
@@ -152,6 +154,7 @@ public class SnapshotCoordinator {
 		opened.put(filename, new CountDownLatch(1));
 	}
 
+	private final ExecutorService executorService = Executors.newSingleThreadExecutor();
 	/**
 	 * Returns a task that will complete when given file is closed.  Returns immediately if the
 	 * file is not open.
@@ -168,19 +171,14 @@ public class SnapshotCoordinator {
 
 		if (latch == null) {
 			taskCompletionSource.setResult(null);
-
 			return taskCompletionSource.getTask();
 		}
 
-		new AsyncTask<Void, Void, Void>() {
-			@Override
-			protected Void doInBackground(Void... voids) {
-				Result result = new CountDownTask(latch).await();
-				taskCompletionSource.setResult(result);
-
-				return null;
-			}
-		}.execute();
+		executorService.submit(() -> {
+			Result result = new CountDownTask(latch).await();
+			taskCompletionSource.setResult(result);
+			return null;
+		});
 
 		return taskCompletionSource.getTask();
 	}
