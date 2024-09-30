@@ -8,12 +8,14 @@
 
 package tech.oldes.GooglePlay;
 
+import static tech.oldes.GooglePlay.GooglePlayExtension.extensionContext;
+
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-//import android.support.annotation.NonNull;
 import android.util.Log;
+import android.view.View;
 
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
@@ -127,7 +129,7 @@ public class GoogleApiHelper {
                             if (e instanceof ApiException && ((ApiException) e).getStatusCode() == CommonStatusCodes.SIGN_IN_REQUIRED) {
                                 // Start a verbose SignIn activity....
                                 try {
-                                    Activity a = GooglePlayExtension.extensionContext.getActivity();
+                                    Activity a = extensionContext.getActivity();
                                     a.startActivityForResult(mGoogleSignInClient.getSignInIntent(), RC_SIGN_IN);
                                 }
                                 catch (Exception exception) {
@@ -136,7 +138,8 @@ public class GoogleApiHelper {
                                 }
                             } else {
                                 Log.e(TAG, "silentSignIn(): failure", e);
-                                GooglePlayExtension.extensionContext.dispatchEvent("ON_SIGN_IN_FAIL", e.getMessage());
+								assert e != null;
+								extensionContext.dispatchEvent("ON_SIGN_IN_FAIL", e.getMessage());
                                 GooglePlayExtension.googleApiHelper.onDisconnected();
                             }
                         }
@@ -181,7 +184,7 @@ public class GoogleApiHelper {
                     @Override
                     public void onSuccess(Intent intent) {
                         try {
-                            GooglePlayExtension.extensionContext.getActivity().startActivityForResult(intent, RC_ACHIEVEMENT_UI);
+                            extensionContext.getActivity().startActivityForResult(intent, RC_ACHIEVEMENT_UI);
                         }
                         catch(Exception e){
                             Log.e(TAG, "Failed to start achievements activity.");
@@ -205,8 +208,13 @@ public class GoogleApiHelper {
             Context context = GooglePlayExtension.appContext;
             mAchievementsClient = Games.getAchievementsClient(context, mSignedInAccount);
             mSnapshotsClient = Games.getSnapshotsClient(context, mSignedInAccount);
-            Games.getGamesClient(mActivity, mSignedInAccount).setViewForPopups(mActivity.findViewById(android.R.id.content));
-            GooglePlayExtension.extensionContext.dispatchEvent("ON_SIGN_IN_SUCCESS");
+			Activity activity = extensionContext.getActivity();
+			if (activity != null) {
+				View view = mActivity.findViewById(android.R.id.content);
+				if (view != null)
+					Games.getGamesClient(mActivity, mSignedInAccount).setViewForPopups(view);
+			}
+            extensionContext.dispatchEvent("ON_SIGN_IN_SUCCESS");
         } catch (Exception e) {
             Log.e(TAG, e.toString());
         }
@@ -216,7 +224,7 @@ public class GoogleApiHelper {
         mSignedInAccount = null;
         mAchievementsClient = null;
         mSnapshotsClient = null;
-        GooglePlayExtension.extensionContext.dispatchEvent("ON_SIGN_OUT_SUCCESS");
+        extensionContext.dispatchEvent("ON_SIGN_OUT_SUCCESS");
     }
 
     public void onActivityResult(int requestCode, int resultCode, Intent intent) {
@@ -240,7 +248,7 @@ public class GoogleApiHelper {
                 }
                 Log.e(TAG, "Failed to signIn: " + message);
                 Log.e(TAG, apiException.toString());
-                GooglePlayExtension.extensionContext.dispatchEvent("ON_SIGN_IN_FAIL", resultCode + "|"+message);
+                extensionContext.dispatchEvent("ON_SIGN_IN_FAIL", resultCode + "|"+message);
                 onDisconnected();
             }
         } else if(requestCode == RC_ACHIEVEMENT_UI) {
@@ -253,7 +261,7 @@ public class GoogleApiHelper {
 
     // ========== SNAPSHOTS ======================================================
     //Create a HashMap
-    private Map<String, SavedGame> mSaveGamesData =  new HashMap<String, SavedGame>();
+    private final Map<String, SavedGame> mSaveGamesData =  new HashMap<String, SavedGame>();
 
     private Task<SnapshotsClient.DataOrConflict<Snapshot>> waitForClosedAndOpen(final String snapshotName) {
 
@@ -275,7 +283,7 @@ public class GoogleApiHelper {
                         return openTask.addOnFailureListener(new OnFailureListener() {
                             @Override
                             public void onFailure(@NonNull Exception e) {
-                                GooglePlayExtension.extensionContext.dispatchEvent("openSnapshotFailed",
+                                extensionContext.dispatchEvent("openSnapshotFailed",
                                         snapshotName +" "+e.getMessage());
                                 GooglePlayExtension.handleException(e, "openSnapshotFailed");
                             }
@@ -318,14 +326,15 @@ public class GoogleApiHelper {
 
                             } catch (IOException e) {
                                 Log.e(TAG, "Error while reading snapshot contents: " + e.getMessage());
-                                GooglePlayExtension.extensionContext.dispatchEvent("openSnapshotFailed",
+                                extensionContext.dispatchEvent("openSnapshotFailed",
                                         name +" "+e.getMessage());
                             }
                         }
                         if (!coord.isAlreadyClosing(name)) {
                             if(GooglePlayExtension.VERBOSE>0) Log.d(TAG, "discardAndClose.."+coord.isAlreadyClosing(name));
                             try {
-                                coord.discardAndClose(mSnapshotsClient, snapshot)
+								assert snapshot != null;
+								coord.discardAndClose(mSnapshotsClient, snapshot)
                                         .addOnFailureListener(new OnFailureListener() {
                                             @Override
                                             public void onFailure(@NonNull Exception e) {
@@ -357,7 +366,7 @@ public class GoogleApiHelper {
         if(GooglePlayExtension.VERBOSE>2) Log.d(TAG, "[saveSnapshot] " + name +" signed? "+isSignedIn());
         try {
             if (!isSignedIn()) {
-                GooglePlayExtension.extensionContext.dispatchEvent("saveSnapshotFailed", name + " user not connected!");
+                extensionContext.dispatchEvent("saveSnapshotFailed", name + " user not connected!");
                 return;
             }
             SavedGame save = mSaveGamesData.get(name);
@@ -404,7 +413,7 @@ public class GoogleApiHelper {
 
     public void deleteSnapshot(String name) {
         if(!isSignedIn()) {
-            GooglePlayExtension.extensionContext.dispatchEvent("deleteSnapshotFailed", name +" user not connected!");
+            extensionContext.dispatchEvent("deleteSnapshotFailed", name +" user not connected!");
             return;
         }
         SavedGame save = mSaveGamesData.get(name);
@@ -429,7 +438,8 @@ public class GoogleApiHelper {
         }
         String name = snapshot.getMetadata().getUniqueName();
         SavedGame save = mSaveGamesData.get(name);
-        save.isOpening = false;
+		assert save != null;
+		save.isOpening = false;
         save.setSnapshot(snapshot);
 
         if(GooglePlayExtension.VERBOSE>2) Log.d(TAG, "onSnapshotOpened() "+name+" "+save);
@@ -440,7 +450,7 @@ public class GoogleApiHelper {
             deleteSnapshot(name);
         } else {
             save.setData(snapshot.getSnapshotContents().readFully());
-            GooglePlayExtension.extensionContext.dispatchEvent("openSnapshotReady", name);
+            extensionContext.dispatchEvent("openSnapshotReady", name);
         }
 
     }
@@ -467,7 +477,8 @@ public class GoogleApiHelper {
         if(GooglePlayExtension.VERBOSE>0) Log.i(TAG, "Open resulted in a conflict!");
 
         SnapshotsClient.SnapshotConflict conflict = result.getConflict();
-        final Snapshot snapshot = conflict.getSnapshot();
+		assert conflict != null;
+		final Snapshot snapshot = conflict.getSnapshot();
         final Snapshot conflictSnapshot = conflict.getConflictingSnapshot();
 
      //   ArrayList<Snapshot> snapshotList = new ArrayList<Snapshot>(2);
