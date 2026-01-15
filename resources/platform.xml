@@ -1,115 +1,138 @@
 <platform xmlns="http://ns.adobe.com/air/extension/22.0"> 
 	  <packagedDependencies>
-		<packagedDependency>androidx.activity_activity-1.9.2.jar</packagedDependency>
-		<packagedDependency>androidx.annotation_annotation-1.6.0.jar</packagedDependency>
-		<packagedDependency>androidx.annotation_annotation-experimental-1.4.0.jar</packagedDependency>
-		<packagedDependency>androidx.arch.core_core-common-2.2.0.jar</packagedDependency>
-		<packagedDependency>androidx.arch.core_core-runtime-2.2.0.jar</packagedDependency>
+		<packagedDependency>androidx.activity_activity-1.5.1.jar</packagedDependency>
+		<packagedDependency>androidx.annotation_annotation-1.1.0.jar</packagedDependency>
+		<packagedDependency>androidx.annotation_annotation-experimental-1.0.0.jar</packagedDependency>
+		<packagedDependency>androidx.arch.core_core-common-2.1.0.jar</packagedDependency>
+		<packagedDependency>androidx.arch.core_core-runtime-2.1.0.jar</packagedDependency>
 		<packagedDependency>androidx.collection_collection-1.1.0.jar</packagedDependency>
-		<packagedDependency>androidx.concurrent_concurrent-futures-1.1.0.jar</packagedDependency>
-		<packagedDependency>androidx.core_core-1.13.0.jar</packagedDependency>
+		<packagedDependency>androidx.concurrent_concurrent-futures-1.0.0.jar</packagedDependency>
+		<packagedDependency>androidx.core_core-1.9.0.jar</packagedDependency>
 		<packagedDependency>androidx.core_core-ktx-1.2.0.jar</packagedDependency>
 		<packagedDependency>androidx.customview_customview-1.0.0.jar</packagedDependency>
 		<packagedDependency>androidx.fragment_fragment-1.5.7.jar</packagedDependency>
-		<packagedDependency>androidx.interpolator_interpolator-1.0.0.jar</packagedDependency>
-		<packagedDependency>androidx.lifecycle_lifecycle-common-2.6.2.jar</packagedDependency>
-		<packagedDependency>androidx.lifecycle_lifecycle-livedata-core-2.6.1.jar</packagedDependency>
-		<packagedDependency>androidx.lifecycle_lifecycle-runtime-2.6.2.jar</packagedDependency>
-		<packagedDependency>androidx.lifecycle_lifecycle-viewmodel-2.6.1.jar</packagedDependency>
-		<packagedDependency>androidx.lifecycle_lifecycle-viewmodel-savedstate-2.6.1.jar</packagedDependency>
+		<packagedDependency>androidx.lifecycle_lifecycle-common-2.5.1.jar</packagedDependency>
+		<packagedDependency>androidx.lifecycle_lifecycle-livedata-2.5.1.jar</packagedDependency>
+		<packagedDependency>androidx.lifecycle_lifecycle-livedata-core-2.5.1.jar</packagedDependency>
+		<packagedDependency>androidx.lifecycle_lifecycle-runtime-2.5.1.jar</packagedDependency>
+		<packagedDependency>androidx.lifecycle_lifecycle-service-2.5.1.jar</packagedDependency>
+		<packagedDependency>androidx.lifecycle_lifecycle-viewmodel-2.5.1.jar</packagedDependency>
+		<packagedDependency>androidx.lifecycle_lifecycle-viewmodel-savedstate-2.5.1.jar</packagedDependency>
 		<packagedDependency>androidx.loader_loader-1.1.0.jar</packagedDependency>
-		<packagedDependency>androidx.profileinstaller_profileinstaller-1.3.1.jar</packagedDependency>
-		<packagedDependency>androidx.savedstate_savedstate-1.2.1.jar</packagedDependency>
+		<packagedDependency>androidx.room_room-common-2.5.0.jar</packagedDependency>
+		<packagedDependency>androidx.room_room-ktx-2.5.0.jar</packagedDependency>
+		<packagedDependency>androidx.room_room-runtime-2.5.0.jar</packagedDependency>
+		<packagedDependency>androidx.savedstate_savedstate-1.2.0.jar</packagedDependency>
+		<packagedDependency>androidx.sqlite_sqlite-2.3.0.jar</packagedDependency>
+		<packagedDependency>androidx.sqlite_sqlite-framework-2.3.0.jar</packagedDependency>
 		<packagedDependency>androidx.startup_startup-runtime-1.1.1.jar</packagedDependency>
 		<packagedDependency>androidx.tracing_tracing-1.0.0.jar</packagedDependency>
 		<packagedDependency>androidx.versionedparcelable_versionedparcelable-1.1.1.jar</packagedDependency>
 		<packagedDependency>androidx.viewpager_viewpager-1.0.0.jar</packagedDependency>
-		<packagedDependency>com.google.android.gms_play-services-auth-21.2.0.jar</packagedDependency>
+		<packagedDependency>androidx.work_work-runtime-2.9.1.jar</packagedDependency>
+		<packagedDependency>com.google.android.gms_play-services-auth-21.4.0.jar</packagedDependency>
 		<packagedDependency>com.google.android.gms_play-services-auth-api-phone-18.0.2.jar</packagedDependency>
 		<packagedDependency>com.google.android.gms_play-services-auth-base-18.0.10.jar</packagedDependency>
 		<packagedDependency>com.google.android.gms_play-services-base-18.5.0.jar</packagedDependency>
-		<packagedDependency>com.google.android.gms_play-services-basement-18.4.0.jar</packagedDependency>
-		<packagedDependency>com.google.android.gms_play-services-drive-17.0.0.jar</packagedDependency>
+		<packagedDependency>com.google.android.gms_play-services-basement-18.5.0.jar</packagedDependency>
 		<packagedDependency>com.google.android.gms_play-services-fido-20.0.1.jar</packagedDependency>
-		<packagedDependency>com.google.android.gms_play-services-games-23.2.0.jar</packagedDependency>
+		<packagedDependency>com.google.android.gms_play-services-games-24.0.0.jar</packagedDependency>
 		<packagedDependency>com.google.android.gms_play-services-tasks-18.2.0.jar</packagedDependency>
-		<packagedDependency>com.google.android.play_asset-delivery-2.2.2.jar</packagedDependency>
-		<packagedDependency>com.google.android.play_core-common-2.0.3.jar</packagedDependency>
+		<packagedDependency>com.google.android.play_asset-delivery-2.3.0.jar</packagedDependency>
+		<packagedDependency>com.google.android.play_core-common-2.0.4.jar</packagedDependency>
 		<packagedDependency>com.google.guava_listenablefuture-1.0.jar</packagedDependency>
-		<packagedDependency>org.jetbrains_annotations-13.0.jar</packagedDependency>
+		<packagedDependency>org.jetbrains_annotations-23.0.0.jar</packagedDependency>
 		<packagedDependency>org.jetbrains.kotlin_kotlin-stdlib-1.8.22.jar</packagedDependency>
 		<packagedDependency>org.jetbrains.kotlin_kotlin-stdlib-common-1.8.22.jar</packagedDependency>
-		<packagedDependency>org.jetbrains.kotlinx_kotlinx-coroutines-android-1.6.4.jar</packagedDependency>
-		<packagedDependency>org.jetbrains.kotlinx_kotlinx-coroutines-core-jvm-1.6.4.jar</packagedDependency>
+		<packagedDependency>org.jetbrains.kotlin_kotlin-stdlib-jdk7-1.8.20.jar</packagedDependency>
+		<packagedDependency>org.jetbrains.kotlin_kotlin-stdlib-jdk8-1.8.20.jar</packagedDependency>
+		<packagedDependency>org.jetbrains.kotlinx_kotlinx-coroutines-android-1.7.1.jar</packagedDependency>
+		<packagedDependency>org.jetbrains.kotlinx_kotlinx-coroutines-core-jvm-1.7.1.jar</packagedDependency>
 	  </packagedDependencies> 
 	  <packagedResources>
 	   <packagedResource>
-	      <packageName>androidx.activity</packageName> 
-	        <folderName>res_androidx.activity_activity-1.9.2</folderName> 
+	      <packageName>androidx.activity_activity</packageName> 
+	        <folderName>res_androidx.activity_activity-1.5.1</folderName> 
 	   </packagedResource>
 	   <packagedResource>
-	      <packageName>androidx.annotation</packageName> 
-	        <folderName>res_androidx.annotation_annotation-experimental-1.4.0</folderName> 
+	      <packageName>androidx.core_core</packageName> 
+	        <folderName>res_androidx.core_core-1.9.0</folderName> 
 	   </packagedResource>
 	   <packagedResource>
-	      <packageName>androidx.arch.core</packageName> 
-	        <folderName>res_androidx.arch.core_core-runtime-2.2.0</folderName> 
-	   </packagedResource>
-	   <packagedResource>
-	      <packageName>androidx.core</packageName> 
-	        <folderName>res_androidx.core_core-1.13.0</folderName> 
-	   </packagedResource>
-	   <packagedResource>
-	      <packageName>androidx.fragment</packageName> 
+	      <packageName>androidx.fragment_fragment</packageName> 
 	        <folderName>res_androidx.fragment_fragment-1.5.7</folderName> 
 	   </packagedResource>
 	   <packagedResource>
-	      <packageName>androidx.lifecycle</packageName> 
-	        <folderName>res_androidx.lifecycle_lifecycle-livedata-core-2.6.1</folderName> 
+	      <packageName>androidx.lifecycle_lifecycle_livedata</packageName> 
+	        <folderName>res_androidx.lifecycle_lifecycle-livedata-2.5.1</folderName> 
 	   </packagedResource>
 	   <packagedResource>
-	      <packageName>androidx.lifecycle</packageName> 
-	        <folderName>res_androidx.lifecycle_lifecycle-runtime-2.6.2</folderName> 
+	      <packageName>androidx.lifecycle_lifecycle_livedata_core</packageName> 
+	        <folderName>res_androidx.lifecycle_lifecycle-livedata-core-2.5.1</folderName> 
 	   </packagedResource>
 	   <packagedResource>
-	      <packageName>androidx.lifecycle</packageName> 
-	        <folderName>res_androidx.lifecycle_lifecycle-viewmodel-2.6.1</folderName> 
+	      <packageName>androidx.lifecycle_lifecycle_runtime</packageName> 
+	        <folderName>res_androidx.lifecycle_lifecycle-runtime-2.5.1</folderName> 
 	   </packagedResource>
 	   <packagedResource>
-	      <packageName>androidx.lifecycle</packageName> 
-	        <folderName>res_androidx.lifecycle_lifecycle-viewmodel-savedstate-2.6.1</folderName> 
+	      <packageName>androidx.lifecycle_lifecycle_service</packageName> 
+	        <folderName>res_androidx.lifecycle_lifecycle-service-2.5.1</folderName> 
 	   </packagedResource>
 	   <packagedResource>
-	      <packageName>androidx.profileinstaller</packageName> 
-	        <folderName>res_androidx.profileinstaller_profileinstaller-1.3.1</folderName> 
+	      <packageName>androidx.lifecycle_lifecycle_viewmodel</packageName> 
+	        <folderName>res_androidx.lifecycle_lifecycle-viewmodel-2.5.1</folderName> 
 	   </packagedResource>
 	   <packagedResource>
-	      <packageName>androidx.savedstate</packageName> 
-	        <folderName>res_androidx.savedstate_savedstate-1.2.1</folderName> 
+	      <packageName>androidx.lifecycle_lifecycle_viewmodel_savedstate</packageName> 
+	        <folderName>res_androidx.lifecycle_lifecycle-viewmodel-savedstate-2.5.1</folderName> 
 	   </packagedResource>
 	   <packagedResource>
-	      <packageName>androidx.startup</packageName> 
+	      <packageName>androidx.room_room_ktx</packageName> 
+	        <folderName>res_androidx.room_room-ktx-2.5.0</folderName> 
+	   </packagedResource>
+	   <packagedResource>
+	      <packageName>androidx.room_room_runtime</packageName> 
+	        <folderName>res_androidx.room_room-runtime-2.5.0</folderName> 
+	   </packagedResource>
+	   <packagedResource>
+	      <packageName>androidx.savedstate_savedstate</packageName> 
+	        <folderName>res_androidx.savedstate_savedstate-1.2.0</folderName> 
+	   </packagedResource>
+	   <packagedResource>
+	      <packageName>androidx.sqlite_sqlite</packageName> 
+	        <folderName>res_androidx.sqlite_sqlite-2.3.0</folderName> 
+	   </packagedResource>
+	   <packagedResource>
+	      <packageName>androidx.sqlite_sqlite_framework</packageName> 
+	        <folderName>res_androidx.sqlite_sqlite-framework-2.3.0</folderName> 
+	   </packagedResource>
+	   <packagedResource>
+	      <packageName>androidx.startup_startup_runtime</packageName> 
 	        <folderName>res_androidx.startup_startup-runtime-1.1.1</folderName> 
 	   </packagedResource>
 	   <packagedResource>
-	      <packageName>com.google.android.gms</packageName> 
-	        <folderName>res_com.google.android.gms_play-services-auth-21.2.0</folderName> 
+	      <packageName>androidx.work_work_runtime</packageName> 
+	        <folderName>res_androidx.work_work-runtime-2.9.1</folderName> 
 	   </packagedResource>
 	   <packagedResource>
-	      <packageName>com.google.android.gms</packageName> 
+	      <packageName>com.google.android.gms_play_services_auth</packageName> 
+	        <folderName>res_com.google.android.gms_play-services-auth-21.4.0</folderName> 
+	   </packagedResource>
+	   <packagedResource>
+	      <packageName>com.google.android.gms_play_services_base</packageName> 
 	        <folderName>res_com.google.android.gms_play-services-base-18.5.0</folderName> 
 	   </packagedResource>
 	   <packagedResource>
-	      <packageName>com.google.android.gms</packageName> 
-	        <folderName>res_com.google.android.gms_play-services-basement-18.4.0</folderName> 
+	      <packageName>com.google.android.gms_play_services_basement</packageName> 
+	        <folderName>res_com.google.android.gms_play-services-basement-18.5.0</folderName> 
 	   </packagedResource>
 	   <packagedResource>
-	      <packageName>com.google.android.gms</packageName> 
-	        <folderName>res_com.google.android.gms_play-services-games-23.2.0</folderName> 
+	      <packageName>com.google.android.gms_play_services_games</packageName> 
+	        <folderName>res_com.google.android.gms_play-services-games-24.0.0</folderName> 
 	   </packagedResource>
 	   <packagedResource>
-	      <packageName>com.google.android.play</packageName> 
-	        <folderName>res_com.google.android.play_core-common-2.0.3</folderName> 
+	      <packageName>com.google.android.play_core_common</packageName> 
+	        <folderName>res_com.google.android.play_core-common-2.0.4</folderName> 
 	   </packagedResource>
 	  </packagedResources>
 	</platform>

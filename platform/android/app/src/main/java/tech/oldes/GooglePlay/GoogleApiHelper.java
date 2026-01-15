@@ -23,7 +23,8 @@ import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.common.api.CommonStatusCodes;
-import com.google.android.gms.drive.Drive;
+import com.google.android.gms.common.api.Scope;
+//import com.google.android.gms.drive.Drive;
 import com.google.android.gms.games.GamesActivityResultCodes;
 import com.google.android.gms.games.SnapshotsClient;
 import com.google.android.gms.games.snapshot.Snapshot;
@@ -78,7 +79,7 @@ public class GoogleApiHelper {
         mSignInOptions =
             new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_GAMES_SIGN_IN)
                 // Add the APPFOLDER scope for Snapshot support.
-                .requestScopes(Drive.SCOPE_APPFOLDER) //not needed anymore?
+                .requestScopes(new Scope("https://www.googleapis.com/auth/drive.appdata"))
                 .build();
         Log.d(TAG, "GoogleSignInOptions scopes: "+ Arrays.toString(mSignInOptions.getScopeArray()));
         Log.i(TAG, "Resolving mGoogleSignInClient, activity: "+ activity);
